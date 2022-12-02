@@ -1,0 +1,176 @@
+第五周（11.26-12.2）
+
+
+学习内容：
+
+c语言程序设计：程序结构，交互图形设计；
+数据结构：堆栈， 队列及顺序存储实现，队列的链式存储实现；
+
+
+问题和总结：
+
+1.单链表有头节点与无头结点的区别：
+https://zhuanlan.zhihu.com/p/46651402（没有头结点的栈）
+答：头结点：在单链表第一个元素结点之前设置的一个结点， 数据域可以不存任何信息，指针域指向单链表第一个元素的结点。
+为了操作方便，一般情况下单链表都具有头结点。
+优点：
+减少了单链表添加删除时特殊情况的判断，减少了程序的复杂性，主要是添加和删除在第一个有元素的结点（首元结点）上有区
+别，如果链表没有头结点，则删除或添加时都得需要判断一次首元结点，有了头结点以后，首元结点实际为链表的第二个结点，
+使得所有的元素结点的添加删除更具有统一性。
+
+以删除结点举例：
+
+typedef struct stu  
+{  
+    int num;  
+    struct stu *next;  
+}TYPE;  
+
+
+没有头结点的情况：
+ 
+TYPE * delete(TYPE * head,int num)  
+{  
+    TYPE *pf,*pb;  
+  
+    if(head==NULL)  
+    {   
+        printf("\nempty list!\n");  
+        return NULL;  
+    }  
+    pb=head;  
+    while ((pb->num!=num) && (pb->next!=NULL))  
+    {  
+        pf=pb;  
+        pb=pb->next;  
+    }   
+    if(pb->num==num)  
+    {   
+<span style="color:#ff0000;">       /* 注意此处需要对头指针进行特殊处理 */  
+        if(pb==head)  
+        {  
+            head=pb->next;  
+        }</span>  
+        else  
+        {  
+            pf->next=pb->next;  
+        }  
+        free(pb);  
+        printf("The node is deleted\n");   
+    }  
+    else  
+    {  
+        printf("The node not been found!\n");  
+    }  
+      
+    return head;  
+}  
+
+
+有头结点的情况
+
+TYPE * delete(TYPE * head,int num)  
+{  
+    TYPE *pf,*pb;  
+  
+    if(head->next==NULL)  
+    {   
+        printf("\nempty list!\n");  
+        return NULL;  
+    }  
+    pf = head;  
+    pb=head->next;  
+    while (pb->num!=num && pb->next!=NULL)  
+    {  
+        pf=pb;  
+        pb=pb->next;  
+    }   
+    if(pb->num==num)  
+    {   
+        pf->next=pb->next;  
+        free(pb);  
+        printf("The node is deleted\n");   
+    }  
+    else  
+    {  
+        printf("The node not been found!\n");  
+    }  
+  
+    return head;  
+}  
+
+经以上删除结点代码看出，当没有头结点时，每次删除时都得去做下特殊判断，而删除带有头结点的链表时，删除的处理上更具有
+统一性，这也体现了链表有头结点的优点。
+
+头指针：
+指向单链表的第一个结点的指针， 如果单链表有头结点，则头指针指向头结点 ，如果单链表没有头结点，则头指针指向第一个首
+元结点。
+
+首元结点：
+单链表中第一个有数据元素的结点。如果单链表有头结点，则首元结点为头结点的下一个结点，如果单链表没有头结点，则首元结
+点就是单链表的第一个结点。
+
+
+
+2.#include的误区：
+
+1）#include不是用来引入库的；
+
+2）stdio.h里面只有printf的原型，printf的代码在另外的地方（某个.lib或.a中）；
+
+3）现在的C语言编译器默认会引入所有的标准库；
+
+4）#include<stdio.h>只是为了让编译器知道printf函数的原型，保证被调用时给出的参数值是正确的类型；
+
+
+
+3.环形队列判满的条件（为什么要预留出一个空值）
+
+第一种方法是设置一个标志量flag,当front==rear且flag=0时为空，当front==rear且flag=1时队列为满；
+
+第二种方法是我们修改条件，保留一个元素空间，也就是说，数组中还有一个空闲单元时，我们就认为这个队列已经满了。
+
+接下来我们重点讨论第二种方法，由于rear可能比front大，也可能是比front小，所以尽管他们只相差一个位置时候就是满的情况，
+但是也可能说是相差整整一圈。所以若队列最大尺寸为QueueSize，那么队列满的条件就是(rear+1）%QueueSize==front(这里取模
+“%”目的就是为了整合rear与front大小为一个问题）。比如图一所示，QueueSize=5,front=0,rear=4，根据公式（4+1）%5=0，所
+以此时队列满。
+
+
+通用计算队列长度公式：
+（rear-front+QueueSize）%QueueSize
+
+/*循环队列求长度代码,返回Q元素个数*/
+ int QueueLength()
+ {
+    return (Q.rear-Q.front+MAXSIZE)%MAXSIZE;
+ } 
+
+
+/*循环队列求长度代码,返回Q元素个数*/
+int QueueLength()
+ {
+    return (Q.rear-Q.front+MAXSIZE)%MAXSIZE;
+ } 
+
+ /*循环队列的入队列操作,若队列未满则插入元素e为Q新的队尾元素*/
+Status EnQueue(SqQueue *Q,QElemType e)
+  {
+    if((Q->rear+1)%MAXSIZE==Q->front)/*队列满判断*/
+        return ERROR;
+    Q-date[Q->rear]=e;              /*将元素e赋值给队尾*/ 
+    Q-rear=(Q->rear+1)%MAXSIZE;     
+            /*rear指针向后移一位置，若到最后则转到数组头部*/
+
+    return OK;   
+  }
+
+  /*循环队列的出队列操作,若队列不空，则删除Q中队头元素，用e返回其值*/
+Status DeQueue(SqQueue *Q,QElemType e)
+{
+    if(Q->front==Q->rear)           /*队列空判断*/
+        return ERROR;
+    *e=Q->data[Q->front];           /*将队头元素赋值给e*/ 
+    Q->front=(Q->front+1)%MAXSIZE;  
+           /*front指针向后移一位置，若到最后则转到数组头部*/
+    return OK
+} 
