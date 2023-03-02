@@ -85,11 +85,97 @@
         for(int i=0;i<v.size();i++)  // 输出数组元素
           printf("%d",v[i]->Data);
       } 
+      
+      
+           
+2.将层序遍历中的队列改为堆栈：
 
-      
-      
-      
-      
-      
-      
-    ---如何用堆栈实现后序遍历的非递归程序？
+（1） 层序遍历与其他三种（前序、中序和后序遍历）的主要区别是：层次遍历通过各结点一次性获得其左右儿子结点信息并借助队列以自顶向下的顺序，形成按宽度优先方式遍历二叉树。而其他三种遍历均是各结点借助堆栈的逆序特点，按自底向上的顺序逐步处理左右儿子，形成按深度优先方式遍历二叉树。
+
+（2） 如果将层序遍历程序中的队列直接改为堆栈，同时将入栈（原来是入队）顺序改为先右儿子再左儿子，其遍历输出结果就是前序遍历。
+
+（3） 对于中序遍历和后序遍历，关键是要判别左子树和右子树什么时候遍历结束。如果将层序遍历程序中的队列改为堆栈，同时仍然按照层次遍历的整体控制思路，对出入栈操作做些修改，仍然可以实现中序遍历和后序遍历。要点是：在原来程序控制过程中，结点出队后是将其左右儿子入队；现在可将控制过程改为：结点出栈后，将当前结点“加塞”在其左右儿子中再次入栈。如果“加塞”在左右儿子之间再次入栈就是中序遍历，如果“加塞”在左右儿子之前再次入栈就是后序遍历。也就是每个结点做两次出入栈处理（类似后序遍历的非递归程序）：
+
+	struct TNode{
+		ElementType Data;
+		BinTree Left;
+		BinTree Right;
+		int Tag;//初始化时，Tag=0; 
+	};
+	//层次遍历二叉树 
+	void LevelorderTraversal ( BinTree BT )
+	{ 
+	    Queue Q; 
+	    BinTree T;
+	    if ( !BT ) return; /* 若是空树则直接返回 */
+	    Q = CreatQueue(); /* 创建空队列Q */
+	    AddQ( Q, BT );
+	    while ( !IsEmpty(Q) ) {
+		T = DeleteQ( Q );
+		printf("%d ", T->Data); /* 访问取出队列的结点 */
+		if ( T->Left )   AddQ( Q, T->Left );
+		if ( T->Right )  AddQ( Q, T->Right );
+	    }
+	}
+	void PreLevelorderTraversal ( BinTree BT )
+	{ 
+	    Stack S; 
+	    BinTree T;
+
+	    if ( !BT ) return; 
+
+	    S = CreatStack(); 
+	    Push( S, BT );
+	    while ( !IsEmpty(S) ) {
+		T = Pop(S);
+		printf("%d ", T->Data); 
+		if ( T->Right )  Push( S, T->Right );
+		if ( T->Left )   Push( S, T->Left );
+	    }
+	}
+	void InLevelorderTraversal ( BinTree BT )//初始默认Tag=0
+	{ 
+	    Stack S; 
+	    BinTree T;
+
+	    if ( !BT ) return; 
+
+	    S = CreatStack(); 
+	    Push( S, BT );
+	    while ( !IsEmpty(S) ) {//左根右->右根左，堆栈存储得反过来 
+		T = Pop(S);
+		if ( T->Right )  Push( S, T->Right );
+		if(Tag==0){
+			Push(S,T)；
+				Tag++； 
+			} 
+			else printf("%d ",T->Data);      
+		if ( T->Left )   Push( S, T->Left );
+	    }
+	}
+	void PostLevelorderTraversal(BinTree BT)//初始默认Tag=0
+	{
+	    Stack S; 
+	    BinTree T;
+
+	    if ( !BT ) return; 
+
+	    S = CreatStack(); 
+	    Push( S, BT );
+	    while ( !IsEmpty(S) ) {
+		T = Pop(S);
+		if(Tag==0){
+			Push(S,T)；
+				Tag++； 
+			} 
+			else printf("%d ",T->Data);  
+		if ( T->Right )  Push( S, T->Right );
+		if ( T->Left )   Push( S, T->Left );
+	    }	
+	}
+
+
+
+
+3.
+
