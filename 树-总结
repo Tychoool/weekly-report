@@ -1,0 +1,95 @@
+学习内容：
+数据结构:
+  树
+   -树的定义
+   -二叉树的遍历
+   -二叉搜索树
+   -平衡二叉树
+   -哈夫曼树
+   -并查集的实现和优化
+
+问题和总结：
+1.如何用堆栈实现二叉树的非递归遍历？
+
+  0）树的表示：
+  typedef struct TreeNode *BinTree;
+  struct TreeNode{
+	int Data;  // 存值 
+	BinTree Left;    // 左儿子结点 
+	BinTree Right;   // 右儿子结点 
+  };
+  1）先序遍历
+    遍历过程：
+      访问根结点
+      先序遍历其左子树
+      先序遍历其右子树
+    实现：
+    void PreOrderTraversal(BinTree BT){
+      BinTree T = BT;
+      Stack S = CreateStack();  // 创建并初始化堆栈 S
+      while(T || !IsEmpty(S)){  // 当树不为空或堆栈不空 
+        while(T){     
+          Push(S,T);    // 压栈，第一次遇到该结点 
+          printf("%d",T->Data);  // 访问结点
+          T = T->Left;   // 遍历左子树 
+        }
+        if(!IsEmpty(S)){  // 当堆栈不空 
+          T = Pop(S);    // 出栈，第二次遇到该结点 
+          T = T->Right;  // 访问右结点 
+        }
+      } 
+    } 
+
+  2）中序遍历
+  遍历过程：
+      中序遍历其左子树
+      访问根结点
+      中序遍历其右子树
+   实现：
+   void InOrderTraversal(BinTree BT){
+      BinTree T = BT;
+      Stack S = CreateStack();  // 创建并初始化堆栈 S
+      while(T || !IsEmpty(S)){  // 当树不为空或堆栈不空 
+        while(T){     
+          Push(S,T);    // 压栈
+          T = T->Left;   // 遍历左子树 
+        }
+        if(!IsEmpty(S)){  // 当堆栈不空 
+          T = Pop(S);    // 出栈
+          printf("%d",T->Data);  // 访问结点
+          T = T->Right;  // 访问右结点 
+        }
+      } 
+    } 
+
+  3）后序遍历
+   遍历过程：
+      后序遍历其左子树
+      后序遍历其右子树
+      访问根结点
+    实现：
+     void PostOrderTraversal(BinTree BT){
+        BinTree T = BT;
+        Stack S = CreateStack();  // 创建并初始化堆栈 S
+        vector<BinTree> v;   // 创建存储树结点的动态数组
+        Push(S,T);
+        while(!IsEmpty(S)){  // 当树不为空或堆栈不空 
+          T = Pop(S);
+          v.push_back(T);  // 出栈元素进数组
+          if(T->Left)
+            Push(S,T->Left);
+          if(T->Right)
+            Push(S,T->Right);
+        }
+        reverse(v.begin(),v.end());  // 逆转 
+        for(int i=0;i<v.size();i++)  // 输出数组元素
+          printf("%d",v[i]->Data);
+      } 
+
+      
+      
+      
+      
+      
+      
+    ---如何用堆栈实现后序遍历的非递归程序？
