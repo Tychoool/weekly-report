@@ -177,5 +177,188 @@
 
 
 
-3.
+3.搜索树比较序列的判别
+
+如果有人跟你说，在某棵搜索树上找63的过程是：先比较根39，然后比较根的右儿子101，接着比较101的左儿子25，再比较25的右儿子63，这样就找到了。
+也就是说，他在搜索树查找时的比较序列是：39，101，25，63。问：这样的查找序列可能吗？你否能设计一个算法或者程序，判别给定的查找序列是否合理？
+
+答：不可能，39的所有右子树节点都应该比39大，而25比39小。
+    算法：在每次判断一个节点值的时候，与该节点的父节点和其父节点（父节点的父节点）比较，若不在这两个节点区间内，则二叉搜索树不合理。
+    
+    
+    
+4.二叉搜索树的特点和主要操作集
+
+二叉搜索树（BST）也称二叉排序树或二叉查找树
+二叉搜索树：一棵二叉树，可以为空；如果不为空，满足以下性质：
+
+1）非空左子树的所有键值小于其根结点的键值
+2）非空右子树的所有键值大于其根结点的键值
+3）左、右子树都是二叉搜索树
+
+BinTree Find(ElementType X,BinTree BST)：从二叉搜索树 BST 中查找元素 X，返回其所在结点地址
+BinTree FindMin(BinTree BST)：从二叉搜索树 BST 中查找并返回最小元素所在结点的地址
+BinTree FindMax(BinTree BST)：从二叉搜索树 BST 中查找并返回最大元素所在结点的地址
+BinTree Insert(ElementType X,BinTree BST)：插入一个元素进 BST
+BinTree Delete(ElementType X,BinTree BST)：从 BST 中删除一个元素
+
+1）查找
+查找从根结点开始，如果树为空，返回 NULL
+若搜索树不为空，则根结点键值和 X 进行比较，并进行不同处理：
+若 X 小于根结点键值，在左子树中继续查找
+若 X 大于根结点键值，在右子树中继续查找
+如 X 等于根节点键值，查找结束，返回指向此结点的指针
+
+2）查找最大和最小元素
+最大元素一定是在树的最右分支的端结点上
+最小元素一定是在树的最左分支的端结点上
+
+3）删除
+三种情况：
+要删除的是叶结点：直接删除，并将其父结点指针置为 NULL
+要删除的结点只有一个孩子结点：将其父结点的指针指向要删除结点的孩子结点
+要删除的结点有左、右两棵子树：用右子树的最小元素或左子树的最大元素替代被删除结点
+
+
+
+5.平衡二叉树的调整
+
+0）遵循原则
+从离插入结点最近的结点调整
+1）RR 单旋
+当"插入结点"(BR)是"被破坏平衡结点"(A)右子树的右子树时，即 RR 插入时，采用 RR 旋转调整
+其基本思路是把 B 的左子树腾出来挂到 A 的右子树上，返回 B 作为当前子树的根
+AVLTree RRRotation(AVLTree A){
+	AVLTree B = A->right;   // B 为 A 的右子树  
+	A->right = B->left;    // B 的左子树挂在 A 的右子树上 
+	B->left = A;   //  A 挂在 B 的左子树上 
+	return B;  // 此时 B 为根结点了   
+}
+
+2）LL 单旋
+当"插入结点"(BL)是"被破坏平衡结点"(A)左子树的左子树时，即 LL 插入，采用 RR 旋转调整
+其基本思路是把 B 的右子树腾出来挂到 A 的左子树上，返回 B 作为当前子树的根
+AVLTree LLRotation(AVLTree A){
+	// 此时根节点是 A 
+	AVLTree B = A->left;  // B 为 A 的左子树  
+	A->left = B->right;   // B 的右子树挂在 A 的左子树上 
+	B->right = A;     //  A 挂在 B 的右子树上 
+	return B;  // 此时 B 为根结点了 
+}
+
+3）LR 双旋
+当"插入结点"(CL 或者 CR)是"被破坏平衡结点"(A)左子树的右子树时，即 LR 插入，采用 LR 旋转调整
+基本思想是先将 B 作为根结点进行 RR 单旋转化为 LL 插入，再将 A 作为根结点进行 LL 单旋（先 RR 再 LL）
+AVLTree LRRotation(AVLTree A){
+	// 先 RR 单旋
+	A->left = RRRotation(A->left);
+	// 再 LL 单旋 
+	return LLRotation(A);
+}
+
+
+
+6.堆的抽象数据类型
+
+-数据名称：最大堆（MaxHeap）
+-数据对象集：完全二叉树，每个结点的元素值不小于其子结点的元素值
+-操作集：最大堆 H ∈ MaxHeap，元素 item ∈ ElementType
+
+*主要操作有：
+ MaxHeap Create(int MaxSize)：创建一个空的最大堆
+ Boolean IsFull(MaxHeap H)：判断最大堆 H 是否已满
+ Boolean Insert(MaxHeap H,ElementType item)：将元素 item 插入最大堆 H
+ Boolean IsEmpty(MaxHeap H)：判断最大堆 H 是否为空
+ ElementType DeleteMax(MaxHeap H)：返回 H 中最大元素（高优先级）
+
+
+
+7.最大堆的插入操作中for循环i>1怎么保证？
+Insert( MaxHeap H, ElementType X )
+{ /* 将元素X插入最大堆H，其中H->Data[0]已经定义为哨兵 */
+    int i;
+ 
+    if ( IsFull(H) ) { 
+        printf("最大堆已满");
+        return false;
+    }
+    i = ++H->Size; /* i指向插入后堆中的最后一个元素的位置 */
+    for ( ; H->Data[i/2] < X; i/=2 )
+        H->Data[i] = H->Data[i/2]; /* 上滤X */
+    H->Data[i] = X; /* 将X插入 */
+    return true;
+    
+    
+答：使哨兵H->Elements[0]=1000（或其他最大值）。
+
+
+
+8.怎样在线性时间复杂度下建立最大堆？
+
+将 N 个元素直接按顺序存入，再调整各结点的位置（简单说来，对于从倒数第一个有儿子的结点来说，其本身结点和孩子结点共同构成"子最小堆"，借助
+删除的想法，对每个"子最小堆"排序，当排序完成，整个最小堆也建立成功），时间代价是 O ( n )
+
+void PercDown( MaxHeap H, int p )
+{ /* 下滤：将H中以H->Data[p]为根的子堆调整为最大堆 */
+    int Parent, Child;
+    ElementType X;
+
+    X = H->Data[p]; /* 取出根结点存放的值 */
+    for( Parent=p; Parent*2<=H->Size; Parent=Child ) {
+        Child = Parent * 2;
+        if( (Child!=H->Size) && (H->Data[Child]<H->Data[Child+1]) )
+            Child++;  /* Child指向左右子结点的较大者 */
+        if( X >= H->Data[Child] ) break; /* 找到了合适位置 */
+        else  /* 下滤X */
+            H->Data[Parent] = H->Data[Child];
+    }
+    H->Data[Parent] = X;
+}
+
+void BuildHeap( MaxHeap H )
+{ /* 调整H->Data[]中的元素，使满足最大堆的有序性  */
+  /* 这里假设所有H->Size个元素已经存在H->Data[]中 */
+
+    int i;
+
+    /* 从最后一个结点的父节点开始，到根结点1 */
+    for( i = H->Size/2; i>0; i-- )
+        PercDown( H, i );
+}
+
+
+
+9.哈夫曼编码
+给定一段字符串，如何对字符进行编码，可以使得该字符串的编码存储空间最少?
+
+[例] 假设有一段文本，包含58个字符，并由以下7个字符构: a，e，i,s，t，空格 (sp)，换行 (nl) ; 这7个字符出现的次数不同。如何对这7个字符进行编码，使得总编码空间最少?
+-分析
+(1) 用等长ASCII编码: 58 X8 = 464位
+(2) 用等长3位编码: 58 x3 = 174位:
+(3) 不等长编码:出现频率高的字符用的编码短些，出现频率低的字符则可以编码长些?
+
+-怎么进行不等长编码?
+ 如何避免二义性?
+ 前缀码prefix code: 任何字符的编码都不是另一字符编码的前缀,可以无二义地解码.
+
+-二叉树用于编码
+(1) 左右分支:0、1
+(2)字符只在叶结点上
+
+a : 111
+e : 10
+i : 00
+s : 11011
+t : 1100
+sp : 01
+nl : 11010
+Cost = 3x10 + 2x15
++ 2x12 + 5x3
++ 4x4 + 2x13
++ 5x1
+= 146
+
+
+
+
 
