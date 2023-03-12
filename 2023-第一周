@@ -1,0 +1,28 @@
+进度
+●数据结构：树的习题：堆中的路径、File Transfer ；
+           图习题： 列出连通集  Saving James Bond - Easy Version 
+           图课程：定义、遍历、建立，习题选讲。
+           
+           
+下周规划
+●继续刷图和树的课＋题
+
+问题
+●最简化建立邻接矩阵和邻接表有什么区别？
+  如果不是最简化的建立，我认为是没有区别的，都是初始化->读入Nv后建立一个没边有顶点的图->读入Ne后通过for循环读入Ne个v1，v2和weight->不同的插入边函数->顶点有数据就读进去；
+  如果是最简化，我认为是有区别的，邻接矩阵M是二维数组G[maxn][maxn],邻接表L是指针数组G[N],初始化之后都是先读入Nv，M建一个没边有点的二维数组，L建一个没边有点的指针数组，也就是所有节点的firstedge都指向null，
+  下一步，都会插入边，但因为是最简化，不会建立一个插入边的函数，M会通过for循环读入每两点的的权重w也就是G[i][j]=w;L会用for循环读入每个节点相连的节点个数（假设是a），再用一个i<a的for循环把相连的节点插进去。
+  所以不同，但我不确定这个想法对不对TT。
+  
+●在救007的时候，我用了一个结构数组Vs表示节点，一个二维数组表示邻接矩阵，因为有很多函数都要用到这个Vs[N]，但是因为要用scanf读入N,所以没法设成全局变量，需要传指针p，虽然写出来了但是对于整个代码思路还是有点混乱。
+ 是不是该回去再看看结构数组指针相关的C课程？
+ 
+●为什么需要两种遍历，课里举了个走迷宫的例子，但是我想问问有没有两句话简单精准区分那种情况用DFS，哪种用BFS，哪种区别不大，如果只是通过对比迷宫这个例子可能会有些不适用或者麻烦。
+
+
+代码练习
+Save007:https://github.com/Tychoool/data-structure-homework/blob/main/save007.cpp
+File Transfer:https://github.com/Tychoool/data-structure-homework/blob/main/FT.cpp
+最小堆的路径：https://github.com/Tychoool/data-structure-homework/blob/main/%E6%9C%80%E5%B0%8F%E5%A0%86%E7%9A%84%E8%B7%AF%E5%BE%84.cpp
+连通集：https://github.com/Tychoool/data-structure-homework/blob/main/liantongji.cpp
+
